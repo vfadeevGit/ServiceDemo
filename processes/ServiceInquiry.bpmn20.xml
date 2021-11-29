@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:flowable="http://flowable.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:jmix="http://jmix.io/schema/bpm/bpmn" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.flowable.org/processdef">
+  <collaboration id="Collaboration_0g27fzv">
+    <participant id="Participant_1gqvyti" name="Service inquiry" processRef="ServiceInquiry" />
+  </collaboration>
+  <process id="ServiceInquiry" name="Service Inquiry" isExecutable="true" flowable:candidateStarterGroups="ALL" jmix:candidateStarterGroupsValue="ALL">
+    <laneSet id="LaneSet_0fg2a5m">
+      <lane id="Lane_1vwz54a" name="Operator">
+        <flowNodeRef>startEvent1</flowNodeRef>
+        <flowNodeRef>Activity_1uw57i4</flowNodeRef>
+        <flowNodeRef>Activity_0nmuh4q</flowNodeRef>
+      </lane>
+      <lane id="Lane_0o61hcy" name="Manager">
+        <flowNodeRef>Activity_05azs0r</flowNodeRef>
+        <flowNodeRef>Gateway_13jxdfq</flowNodeRef>
+        <flowNodeRef>Event_150eh3z</flowNodeRef>
+      </lane>
+      <lane id="Lane_0cjmimy" name="Service specialist">
+        <flowNodeRef>Activity_00j3tes</flowNodeRef>
+        <flowNodeRef>Event_1oqoqvg</flowNodeRef>
+      </lane>
+    </laneSet>
+    <startEvent id="startEvent1">
+      <extensionElements>
+        <jmix:formData type="input-dialog" openMode="DIALOG" businessKey="InquiryID">
+          <jmix:formFields>
+            <jmix:formField id="InquiryID" caption="Inquiry ID" type="string" editable="true" required="true" />
+          </jmix:formFields>
+        </jmix:formData>
+      </extensionElements>
+      <outgoing>Flow_1w2rmbn</outgoing>
+    </startEvent>
+    <userTask id="Activity_1uw57i4" name="Inquiry registration" flowable:assignee="${initiator.username}" jmix:assigneeSource="processVariable" jmix:assigneeValue="initiator">
+      <extensionElements>
+        <jmix:formData type="input-dialog" openMode="DIALOG">
+          <jmix:formFields>
+            <jmix:formField id="RegistrationDate" caption="Registration date" type="date" editable="true" required="true" />
+            <jmix:formField id="Customer" caption="Customer" type="entity" editable="true" required="true">
+              <jmix:formFieldProperty name="uiComponent" value="entityPicker" />
+              <jmix:formFieldProperty name="entityName" value="Customer" />
+              <jmix:formFieldProperty name="lookupScreen" value="Customer.browse" />
+            </jmix:formField>
+            <jmix:formField id="Description" caption="Description" type="multilineString" editable="true" required="true" />
+          </jmix:formFields>
+        </jmix:formData>
+      </extensionElements>
+      <incoming>Flow_1w2rmbn</incoming>
+      <outgoing>Flow_04o6wri</outgoing>
+    </userTask>
+    <sequenceFlow id="Flow_1w2rmbn" sourceRef="startEvent1" targetRef="Activity_1uw57i4" />
+    <sequenceFlow id="Flow_04o6wri" sourceRef="Activity_1uw57i4" targetRef="Activity_0nmuh4q" />
+    <sequenceFlow id="Flow_0f32a7j" sourceRef="Activity_0nmuh4q" targetRef="Activity_05azs0r" />
+    <userTask id="Activity_05azs0r" name="Assess Inquiry" flowable:assignee="ServiceManager" jmix:assigneeSource="expression" jmix:assigneeValue="ServiceManager">
+      <extensionElements>
+        <jmix:formData type="input-dialog" openMode="DIALOG">
+          <jmix:formFields>
+            <jmix:formField id="RegistrationDate" caption="Registration date" type="date" editable="false" required="false" />
+            <jmix:formField id="Customer" caption="Customer" type="entity" editable="false" required="false">
+              <jmix:formFieldProperty name="uiComponent" value="entityPicker" />
+              <jmix:formFieldProperty name="entityName" value="Customer" />
+              <jmix:formFieldProperty name="lookupScreen" value="Customer.browse" />
+            </jmix:formField>
+            <jmix:formField id="Description" caption="Description" type="multilineString" editable="false" required="false" />
+            <jmix:formField id="ServiceSpecialist" caption="Service specialist" type="entity" editable="true" required="true">
+              <jmix:formFieldProperty name="uiComponent" value="entityPicker" />
+              <jmix:formFieldProperty name="entityName" value="User" />
+              <jmix:formFieldProperty name="lookupScreen" value="User.browse" />
+            </jmix:formField>
+          </jmix:formFields>
+          <jmix:formOutcomes>
+            <jmix:formOutcome id="applyInquiry" caption="Apply inquiry" icon="font-icon:CHECK" />
+            <jmix:formOutcome id="declineInquiry" caption="Decline inquiry" icon="font-icon:REMOVE" />
+          </jmix:formOutcomes>
+        </jmix:formData>
+      </extensionElements>
+      <incoming>Flow_0f32a7j</incoming>
+      <outgoing>Flow_1uuztd0</outgoing>
+    </userTask>
+    <userTask id="Activity_00j3tes" name="ProcessInquiry" flowable:assignee="${ServiceSpecialist.username}" jmix:assigneeSource="processVariable" jmix:assigneeValue="ServiceSpecialist">
+      <extensionElements>
+        <jmix:formData type="jmix-screen" openMode="DIALOG" screenId="ServiceInquiry.edit" />
+      </extensionElements>
+      <incoming>Flow_1pi2f3i</incoming>
+      <outgoing>Flow_0o32k4s</outgoing>
+    </userTask>
+    <sequenceFlow id="Flow_0o32k4s" sourceRef="Activity_00j3tes" targetRef="Event_1oqoqvg" />
+    <sequenceFlow id="Flow_1uuztd0" sourceRef="Activity_05azs0r" targetRef="Gateway_13jxdfq" />
+    <sequenceFlow id="Flow_1pi2f3i" sourceRef="Gateway_13jxdfq" targetRef="Activity_00j3tes">
+      <extensionElements>
+        <jmix:conditionDetails conditionSource="userTaskOutcome" conditionType="anyoneCompleted" userTaskId="Activity_05azs0r" userTaskOutcome="applyInquiry" />
+      </extensionElements>
+      <conditionExpression xsi:type="tFormalExpression">${execution.getVariable('Activity_05azs0r_result') != null &amp;&amp; bpm_UserTaskResults.containsOutcome(execution.getVariable('Activity_05azs0r_result'), 'applyInquiry')}</conditionExpression>
+    </sequenceFlow>
+    <exclusiveGateway id="Gateway_13jxdfq">
+      <incoming>Flow_1uuztd0</incoming>
+      <outgoing>Flow_1pi2f3i</outgoing>
+      <outgoing>Flow_1hvhcrm</outgoing>
+    </exclusiveGateway>
+    <serviceTask id="Activity_0nmuh4q" name="Inquiry entry" flowable:expression="${registerNewInquiry.createNewServiceInquiry(RegistrationDate, Customer, Description, initiator)}" flowable:resultVariable="editedInquiry" flowable:useLocalScopeForResultVariable="true" jmix:taskType="springBean" jmix:beanName="registerNewInquiry">
+      <extensionElements>
+        <jmix:springBean beanName="registerNewInquiry" methodName="createNewServiceInquiry">
+          <jmix:methodParam name="RegistrationDate" type="java.util.Date" isVariable="true">RegistrationDate</jmix:methodParam>
+          <jmix:methodParam name="Customer" type="com.company.servicedemo.entity.Customer" isVariable="true">Customer</jmix:methodParam>
+          <jmix:methodParam name="Description" type="java.lang.String" isVariable="true">Description</jmix:methodParam>
+          <jmix:methodParam name="Initiator" type="com.company.servicedemo.entity.User" isVariable="true">initiator</jmix:methodParam>
+        </jmix:springBean>
+      </extensionElements>
+      <incoming>Flow_04o6wri</incoming>
+      <outgoing>Flow_0f32a7j</outgoing>
+    </serviceTask>
+    <sequenceFlow id="Flow_1hvhcrm" sourceRef="Gateway_13jxdfq" targetRef="Event_150eh3z">
+      <extensionElements>
+        <jmix:conditionDetails conditionSource="userTaskOutcome" conditionType="anyoneCompleted" userTaskId="Activity_05azs0r" userTaskOutcome="declineInquiry" />
+      </extensionElements>
+      <conditionExpression xsi:type="tFormalExpression">${execution.getVariable('Activity_05azs0r_result') != null &amp;&amp; bpm_UserTaskResults.containsOutcome(execution.getVariable('Activity_05azs0r_result'), 'declineInquiry')}</conditionExpression>
+    </sequenceFlow>
+    <endEvent id="Event_150eh3z">
+      <incoming>Flow_1hvhcrm</incoming>
+    </endEvent>
+    <endEvent id="Event_1oqoqvg">
+      <incoming>Flow_0o32k4s</incoming>
+    </endEvent>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_process">
+    <bpmndi:BPMNPlane id="BPMNPlane_process" bpmnElement="Collaboration_0g27fzv">
+      <bpmndi:BPMNShape id="Participant_1gqvyti_di" bpmnElement="Participant_1gqvyti" isHorizontal="true">
+        <omgdc:Bounds x="80" y="-20" width="740" height="420" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_0cjmimy_di" bpmnElement="Lane_0cjmimy" isHorizontal="true">
+        <omgdc:Bounds x="110" y="240" width="710" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_0o61hcy_di" bpmnElement="Lane_0o61hcy" isHorizontal="true">
+        <omgdc:Bounds x="110" y="123" width="710" height="117" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_1vwz54a_di" bpmnElement="Lane_1vwz54a" isHorizontal="true">
+        <omgdc:Bounds x="110" y="-20" width="710" height="143" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1hvhcrm_di" bpmnElement="Flow_1hvhcrm">
+        <omgdi:waypoint x="615" y="190" />
+        <omgdi:waypoint x="732" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1pi2f3i_di" bpmnElement="Flow_1pi2f3i">
+        <omgdi:waypoint x="590" y="215" />
+        <omgdi:waypoint x="590" y="290" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1uuztd0_di" bpmnElement="Flow_1uuztd0">
+        <omgdi:waypoint x="480" y="190" />
+        <omgdi:waypoint x="565" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0o32k4s_di" bpmnElement="Flow_0o32k4s">
+        <omgdi:waypoint x="640" y="330" />
+        <omgdi:waypoint x="732" y="330" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0f32a7j_di" bpmnElement="Flow_0f32a7j">
+        <omgdi:waypoint x="430" y="90" />
+        <omgdi:waypoint x="430" y="150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_04o6wri_di" bpmnElement="Flow_04o6wri">
+        <omgdi:waypoint x="330" y="50" />
+        <omgdi:waypoint x="380" y="50" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1w2rmbn_di" bpmnElement="Flow_1w2rmbn">
+        <omgdi:waypoint x="180" y="50" />
+        <omgdi:waypoint x="230" y="50" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="BPMNShape_startEvent1" bpmnElement="startEvent1">
+        <omgdc:Bounds x="150" y="35" width="30" height="30" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0kvhgi8_di" bpmnElement="Activity_1uw57i4">
+        <omgdc:Bounds x="230" y="10" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1i5jp6v_di" bpmnElement="Activity_05azs0r">
+        <omgdc:Bounds x="380" y="150" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_08sn2hy_di" bpmnElement="Activity_00j3tes">
+        <omgdc:Bounds x="540" y="290" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_13jxdfq_di" bpmnElement="Gateway_13jxdfq" isMarkerVisible="true">
+        <omgdc:Bounds x="565" y="165" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_108ohku_di" bpmnElement="Activity_0nmuh4q">
+        <omgdc:Bounds x="380" y="10" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_150eh3z_di" bpmnElement="Event_150eh3z">
+        <omgdc:Bounds x="732" y="172" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1oqoqvg_di" bpmnElement="Event_1oqoqvg">
+        <omgdc:Bounds x="732" y="312" width="36" height="36" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

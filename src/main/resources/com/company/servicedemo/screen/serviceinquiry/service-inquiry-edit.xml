@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://jmix.io/schema/ui/window"
+        caption="msg://serviceInquiryEdit.caption"
+        focusComponent="form">
+    <data>
+        <instance id="serviceInquiryDc"
+                  class="com.company.servicedemo.entity.ServiceInquiry">
+            <fetchPlan extends="_base">
+                <property name="jobList" fetchPlan="_base">
+                    <property name="job" fetchPlan="_base"/>
+                </property>
+                <property name="customer" fetchPlan="_base"/>
+            </fetchPlan>
+            <loader/>
+            <collection id="jobListDc" property="jobList"/>
+        </instance>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+        <screenSettings id="settingsFacet" auto="true"/>
+    </facets>
+    <actions>
+        <action id="windowCommitAndClose" caption="msg:///actions.Ok"
+                icon="EDITOR_OK"
+                primary="true"
+                shortcut="${COMMIT_SHORTCUT}"/>
+        <action id="windowClose"
+                caption="msg:///actions.Close"
+                icon="EDITOR_CANCEL"/>
+    </actions>
+    <dialogMode height="600"
+                width="800"/>
+    <layout spacing="true" expand="editActions">
+        <form id="form" dataContainer="serviceInquiryDc">
+            <column width="350px">
+                <dateField id="dateRegisterField" property="dateRegister"/>
+                <textField id="descriptionField" property="description"/>
+                <textField id="inquiryIDField" property="inquiryID"/>
+                <entityPicker id="customerField" property="customer">
+                    <actions>
+                        <action id="entityLookup" type="entity_lookup"/>
+                        <action id="entityClear" type="entity_clear"/>
+                    </actions>
+                </entityPicker>
+            </column>
+        </form>
+        <groupBox id="jobListBox" caption="msg://com.company.servicedemo.entity/ServiceInquiry.jobList">
+            <table id="jobListTable" dataContainer="jobListDc" width="100%" height="200px">
+                <actions>
+                    <action id="create" type="create"/>
+                    <action id="edit" type="edit"/>
+                    <action id="remove" type="remove"/>
+                </actions>
+                <columns>
+                    <column id="job"/>
+                    <column id="unit"/>
+                    <column id="quantity"/>
+                </columns>
+                <buttonsPanel>
+                    <button action="jobListTable.create"/>
+                    <button action="jobListTable.edit"/>
+                    <button action="jobListTable.remove"/>
+                </buttonsPanel>
+            </table>
+        </groupBox>
+        <hbox id="editActions" spacing="true">
+            <button id="commitAndCloseBtn" action="windowCommitAndClose" caption="Complete" icon="OK"/>
+        </hbox>
+    </layout>
+</window>
