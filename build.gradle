@@ -6,7 +6,7 @@ plugins {
 apply plugin: 'org.springframework.boot'
 
 jmix {
-    bomVersion = '1.1.1'
+    bomVersion = '1.1.2'
 }
 
 group = 'com.company'
@@ -47,6 +47,8 @@ dependencies {
     implementation("org.postgresql:postgresql")
     implementation("io.jmix.bpm:jmix-bpm-ui-starter")
     implementation("io.jmix.bpm:jmix-bpm-starter")
+    implementation("io.jmix.email:jmix-email-starter")
+    implementation("io.jmix.email:jmix-email-ui-starter")
 }
 
 test {
